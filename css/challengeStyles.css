@@ -1,0 +1,235 @@
+/* CHALLENGES  */
+.challenges {
+    background: #042a11;
+}
+
+.challenge-character {
+    position: absolute;
+    top: -139px;
+    width: 10rem;
+    left: -29px;
+    z-index: 9;
+}
+
+.close-icon {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 1.9rem;
+    color: #333;
+}
+
+.close-icon-modal {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 1.9rem;
+    color: #333;
+}
+
+.group-48 {
+    margin-top: 23%;
+    margin-bottom: 18%;
+    margin-left: 28%;
+    margin-right: 28%;
+}
+
+.wooden-step {
+    position: relative;
+}
+
+.wooden-step-img {
+    width: 113.17px;
+    height: 61.97px;
+    bottom: 50px;
+    cursor: pointer;
+}
+
+.wooden-step-img-2 {
+    position: relative;
+    top: 87px;
+    width: 113.17px;
+    height: 61.97px;
+    cursor: pointer;
+}
+
+.wooden-step-img-right {
+    position: absolute;
+    top: 10px;
+    width: 113.17px;
+    height: 61.97px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.path-line {
+    position: relative;
+    left: 50px;
+    width: 550px;
+    height: 188.5px;
+}
+
+.path-line-2 {
+    position: relative;
+    margin-top: 90px;
+    left: 50px;
+    width: 550px;
+    height: 188.5px;
+}
+
+.path-line-right {
+    position: relative;
+    top: 80px;
+    bottom: 80px;
+    left: 50px;
+    width: 550px;
+    height: 188.5px;
+}
+
+.final-step {
+    top: 1rem;
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    right: 15px;
+}
+
+
+
+
+/* Modal  */
+.custom-modal {
+    position: absolute;
+    display: none;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    width: 300px;
+    padding: 10px;
+    transform: translate(-50%, -120%);
+    left: 50%;
+}
+
+.custom-modal::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    transform: translateY(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent transparent white;
+}
+
+/* Modal content styling */
+.custom-modal-content {
+    text-align: center;
+    text-align: justify;
+}
+
+.custom-modal-content {
+    position: relative;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: auto;
+}
+
+.close-btn {
+    cursor: pointer;
+    right: 0;
+}
+
+.custom-modal-title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.custom-modal-body {
+    margin: 10px 0;
+    font-size: 0.9rem;
+}
+
+/* Celebration Modal */
+.confetti {
+    position: fixed;
+    /* Covers the entire screen */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    pointer-events: none;
+    /* Avoid interference with UI elements */
+    overflow: hidden;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 30px;
+    top: 0;
+    opacity: 0;
+    background: #ffd300;
+    animation: makeItRain 1000ms infinite ease-out;
+}
+
+.confetti-piece:nth-child(odd) {
+    background: #7431e8;
+}
+
+.confetti-piece:nth-child(4n-7) {
+    background: red;
+}
+
+.confetti-piece:nth-child(even) {
+    z-index: 1;
+}
+
+.confetti-piece:nth-child(4n) {
+    width: 5px;
+    height: 12px;
+    animation-duration: 2000ms;
+}
+
+.confetti-piece:nth-child(3n) {
+    width: 3px;
+    height: 10px;
+    animation-duration: 2500ms;
+    animation-delay: 1000ms;
+}
+
+@keyframes makeItRain {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(100vh);
+    }
+}
+
+
+
+.wooden-block {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wooden-block:hover {
+    transform: scale(1.05);
+    /* box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.3); */
+}
+
+#taskDescription {
+    font-size: 17px;
+    color: #333;
+}

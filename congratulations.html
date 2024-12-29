@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #042a11; /* Green background */
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .celebration {
+            font-size: 3rem;
+            text-align: center;
+            animation: celebration 2s ease-in-out infinite;
+        }
+
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffdf00;
+            animation: fall 3s ease-in infinite;
+        }
+
+        @keyframes celebration {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Confetti -->
+    <div class="confetti">
+        <!-- Add confetti pieces -->
+        <div class="confetti-piece" style="left: 10vw; animation-delay: 0s;"></div>
+        <div class="confetti-piece" style="left: 25vw; animation-delay: 0.5s;"></div>
+        <div class="confetti-piece" style="left: 40vw; animation-delay: 1s;"></div>
+        <div class="confetti-piece" style="left: 60vw; animation-delay: 0.2s;"></div>
+        <div class="confetti-piece" style="left: 80vw; animation-delay: 1.5s;"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="text-center">
+        <div class="celebration">
+            <h1>Congratulations! 🎉</h1>
+            <p>You have successfully completed the tasks.</p>
+        </div>
+        <button class="btn btn-light mt-3" onclick="window.location.href = 'index.html';">Go Back</button>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>

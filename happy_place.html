@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Place</title>
+    <link rel="stylesheet" href="css/happyplaceStyles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .memory {
+            position: absolute;
+            height: 7rem;
+            cursor: pointer;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 5rem;
+            height: 5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .plus {
+            margin-top: -7px;
+        }
+
+        .floating-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .memory-text {
+            position: absolute;
+            background-color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+            transform: translate(-50%, -100%);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .memory {
+                height: 5rem;
+            }
+
+            .floating-btn {
+                width: 6rem;
+                height: 6rem;
+                font-size: 4rem;
+            }
+
+            .plus {
+                margin-top: -11px;
+            }
+            .modal-dialog {
+                margin-top: 30%;
+            }
+        }
+        .modal-content {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="happyplace">
+    <div class="d-flex gap-3 mx-3 mt-3 align-items-center">
+        <a href="index.html"><img src="assets/back.png" style="height: 2.5rem;" alt=""></a>
+        <div class="text-white fs-5">Happy Place</div>
+    </div>
+
+    <!-- Fixed memories -->
+    <div id="memories-container">
+        <img src="assets/tree1.png" class="memory" style="top: 50px; left: 80px;" alt="Tree1">
+        <img src="assets/tree1.png" class="memory" style="top: 50px; left: 500px;" alt="Tree1">
+        <img src="assets/tree1.png" class="memory" style="top: 400px; left: 100px;" alt="Tree1">
+    </div>
+
+    <!-- Floating + Button -->
+    <button type="button" class="btn btn-outline-primary floating-btn" onclick="openMemoryModal()"> <span
+            class="plus">&#43;</span></button>
+    <!-- <button class="" > + </button> -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="memoryModal" tabindex="-1" aria-labelledby="memoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="memoryModalLabel">Add a Memory</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="memoryInput" class="form-control" placeholder="Enter your memory"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addMemory()">Save</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        const container = document.getElementById('memories-container');
+
+        function openMemoryModal() {
+            document.getElementById('memoryInput').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('memoryModal'));
+            modal.show();
+        }
+
+        function addMemory() {
+            const inputText = document.getElementById('memoryInput').value.trim();
+            if (!inputText) return;
+
+            const existingMemories = container.querySelectorAll('.memory');
+            let randomTop, randomLeft;
+            let attempts = 0;
+            const maxAttempts = 500;
+
+            do {
+                const screenHeight = window.innerHeight;
+                const screenWidth = window.innerWidth;
+                randomTop = Math.random() * (screenHeight - 200);
+                randomLeft = Math.random() * (screenWidth - 200);
+
+                attempts++;
+            } while (isOverlapping(randomTop, randomLeft, existingMemories) && attempts < maxAttempts);
+
+            if (attempts >= maxAttempts) {
+                alert('Unable to find a non-overlapping position. Please try again.');
+                return;
+            }
+
+            const newTree = document.createElement('img');
+            newTree.src = 'assets/tree2.png';
+            newTree.className = 'memory';
+            newTree.style.top = `${randomTop}px`;
+            newTree.style.left = `${randomLeft}px`;
+            newTree.setAttribute('data-memory', inputText);
+
+            newTree.addEventListener('click', () => showMemory(newTree));
+            container.appendChild(newTree);
+
+            bootstrap.Modal.getInstance(document.getElementById('memoryModal')).hide();
+        }
+
+        function showMemory(tree) {
+            const memoryText = tree.getAttribute('data-memory');
+            const bubble = document.createElement('div');
+            bubble.className = 'memory-text';
+            bubble.textContent = memoryText;
+
+            const rect = tree.getBoundingClientRect();
+            bubble.style.top = `${rect.top - 10}px`;
+            bubble.style.left = `${rect.left + rect.width / 2}px`;
+
+            document.body.appendChild(bubble);
+
+            setTimeout(() => bubble.remove(), 3000);
+        }
+
+        function isOverlapping(newTop, newLeft, existingElements) {
+            const newTreeSize = 70;
+            for (const element of existingElements) {
+                const rect = element.getBoundingClientRect();
+                const existingTop = rect.top;
+                const existingLeft = rect.left;
+                const existingBottom = existingTop + rect.height;
+                const existingRight = existingLeft + rect.width;
+
+                if (
+                    newTop < existingBottom &&
+                    newTop + newTreeSize > existingTop &&
+                    newLeft < existingRight &&
+                    newLeft + newTreeSize > existingLeft
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    </script>
+</body>
+
+</html>
