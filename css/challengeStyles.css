@@ -1,7 +1,23 @@
-/* CHALLENGES  */
-.challenges {
-    background: #042a11;
+body {
+    position: relative;
+    margin: 0;
+    min-height: 100vh;
 }
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../assets/bg.png') no-repeat center center;
+    background-size: cover;
+    z-index: -1; /* Ensure it stays behind the content */
+}
+
+
+
 
 .challenge-character {
     position: absolute;
@@ -10,6 +26,25 @@
     left: -29px;
     z-index: 9;
 }
+
+@keyframes jump {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+  
+    50% {
+      transform: translateY(-10px);
+      /* Adjust the negative value for jump height */
+    }
+  }
+  
+  .jump-animation {
+    animation: jump 2s ease-in-out infinite;
+    cursor: pointer;
+  }
+  
 
 .close-icon {
     position: absolute;
@@ -30,10 +65,11 @@
 }
 
 .group-48 {
+    width: 670px;
     margin-top: 23%;
     margin-bottom: 18%;
     margin-left: 28%;
-    margin-right: 28%;
+    margin-right: 17%;
 }
 
 .wooden-step {

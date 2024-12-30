@@ -56,7 +56,10 @@
             text-align: center;
             transform: translate(-50%, -100%);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            word-break: break-word;
+            max-width: 200px;
         }
+
 
         @media (max-width: 768px) {
             .memory {
@@ -72,10 +75,12 @@
             .plus {
                 margin-top: -11px;
             }
+
             .modal-dialog {
                 margin-top: 30%;
             }
         }
+
         .modal-content {
             text-align: center;
         }
@@ -90,9 +95,9 @@
 
     <!-- Fixed memories -->
     <div id="memories-container">
-        <img src="assets/tree1.png" class="memory" style="top: 50px; left: 80px;" alt="Tree1">
-        <img src="assets/tree1.png" class="memory" style="top: 50px; left: 500px;" alt="Tree1">
-        <img src="assets/tree1.png" class="memory" style="top: 400px; left: 100px;" alt="Tree1">
+        <div id="tree-container" style="position: absolute; width: 100%; height: 100%; margin:5%"></div>
+
+
     </div>
 
     <!-- Floating + Button -->
@@ -117,14 +122,14 @@
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-
     <script>
         const container = document.getElementById('memories-container');
+        const affirmationsPositions = [];
 
         function openMemoryModal() {
             document.getElementById('memoryInput').value = '';
@@ -132,78 +137,239 @@
             modal.show();
         }
 
+
         function addMemory() {
             const inputText = document.getElementById('memoryInput').value.trim();
             if (!inputText) return;
-
+            let treeSize = 100;
             const existingMemories = container.querySelectorAll('.memory');
             let randomTop, randomLeft;
             let attempts = 0;
             const maxAttempts = 500;
-
+        
+            const topMargin = 150; // Adjust this value to control top margin
+            const leftMargin = 150; // Adjust this value to control left margin
+        
+            // Spread trees across the full screen with a margin
             do {
-                const screenHeight = window.innerHeight;
-                const screenWidth = window.innerWidth;
-                randomTop = Math.random() * (screenHeight - 200);
-                randomLeft = Math.random() * (screenWidth - 200);
-
+                randomTop = Math.random() * (window.innerHeight - treeSize - 150 - topMargin); 
+                randomLeft = Math.random() * (window.innerWidth - treeSize - 100 - leftMargin);
                 attempts++;
-            } while (isOverlapping(randomTop, randomLeft, existingMemories) && attempts < maxAttempts);
-
+            } while (isOverlapping(randomTop, randomLeft, affirmationsPositions) && attempts < maxAttempts);
+        
             if (attempts >= maxAttempts) {
                 alert('Unable to find a non-overlapping position. Please try again.');
                 return;
             }
-
+        
             const newTree = document.createElement('img');
             newTree.src = 'assets/tree2.png';
             newTree.className = 'memory';
             newTree.style.top = `${randomTop}px`;
             newTree.style.left = `${randomLeft}px`;
             newTree.setAttribute('data-memory', inputText);
-
+        
             newTree.addEventListener('click', () => showMemory(newTree));
             container.appendChild(newTree);
-
+        
+            // Add the new tree's position to the list of positions
+            affirmationsPositions.push({ top: randomTop, left: randomLeft });
+        
             bootstrap.Modal.getInstance(document.getElementById('memoryModal')).hide();
         }
+
+        function isOverlapping(newTop, newLeft, existingPositions) {
+            const treeSize = 100; // Size of each tree (you may adjust this value based on the actual size of the trees)
+
+            // Loop through all existing positions (including both types of trees)
+            for (const position of existingPositions) {
+                const existingTop = position.top;
+                const existingLeft = position.left;
+                const existingBottom = existingTop + treeSize;
+                const existingRight = existingLeft + treeSize;
+
+                if (
+                    newTop < existingBottom &&
+                    newTop + treeSize > existingTop &&
+                    newLeft < existingRight &&
+                    newLeft + treeSize > existingLeft
+                ) {
+                    return true; // Overlap detected
+                }
+            }
+
+            return false; // No overlap detected
+        }
+
+        async function fetchAffirmations(url) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.affirmations;
+            } catch (error) {
+                console.error('Error fetching affirmations:', error);
+                return [];
+            }
+        }
+
+        function createTree(index) {
+            const tree = document.createElement('img');
+            tree.src = 'assets/tree1.png'; 
+            tree.className = 'memory';
+            tree.alt = `Tree${index + 1}`;
+            tree.style.position = 'absolute';
+        
+            const treeSize = 100;
+        
+            let randomTop, randomLeft;
+            const maxAttempts = 500;
+            let attempts = 0;
+        
+            const topMargin = 150; 
+            const leftMargin = 150; 
+        
+            do {
+                randomTop = Math.random() * (window.innerHeight - treeSize - 150 - topMargin);
+                randomLeft = Math.random() * (window.innerWidth - treeSize - 100 - leftMargin); 
+                attempts++;
+            } while (isOverlapping(randomTop, randomLeft, affirmationsPositions) && attempts < maxAttempts);
+        
+            if (attempts >= maxAttempts) {
+                console.log('Unable to place tree without overlap.');
+                return null;
+            }
+        
+            tree.style.top = `${randomTop}px`;
+            tree.style.left = `${randomLeft}px`;
+        
+            affirmationsPositions.push({ top: randomTop, left: randomLeft });
+        
+            return tree;
+        }
+
 
         function showMemory(tree) {
             const memoryText = tree.getAttribute('data-memory');
             const bubble = document.createElement('div');
             bubble.className = 'memory-text';
-            bubble.textContent = memoryText;
+            bubble.style.padding = `5px`;
+            bubble.style.display = `flex`;
+        
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '×';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '-4px';
+            closeButton.style.right = '-2px';
+            closeButton.style.border = 'none';
+            closeButton.style.background = 'transparent';
+            closeButton.style.fontSize = '1.5rem';
+            closeButton.style.cursor = 'pointer';
+            closeButton.style.color = '#333';
+        
+            closeButton.addEventListener('click', () => bubble.remove());
+        
+            bubble.appendChild(closeButton);
+            const textContent = document.createElement('div');
+            textContent.textContent = memoryText;
+            textContent.style.marginTop = '2px';
+            textContent.style.padding = '10px';
+            textContent.style.wordBreak = 'break-word';
+            bubble.appendChild(textContent);
+        
+            const rect = tree.getBoundingClientRect();
+        
+            // Ensure the bubble stays within the viewport
+            let bubbleLeft = rect.left + rect.width / 2;
+            if (bubbleLeft + bubble.offsetWidth > window.innerWidth) {
+                bubbleLeft = window.innerWidth - bubble.offsetWidth - 10;
+            } else if (bubbleLeft < 0) {
+                bubbleLeft = 10;
+            }
+        
+            let bubbleTop = rect.top - 10;
+            if (bubbleTop + bubble.offsetHeight < 0) {
+                bubbleTop = rect.bottom + 10;
+            } else if (bubbleTop + bubble.offsetHeight > window.innerHeight) {
+                bubbleTop = window.innerHeight - bubble.offsetHeight - 10;
+            }
+        
+            bubble.style.top = `${bubbleTop}px`;
+            bubble.style.left = `${bubbleLeft}px`;
+        
+            document.body.appendChild(bubble);
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const affirmationsURL = 'affirmations.json';
+            const container = document.getElementById('tree-container');
+
+            try {
+                const affirmations = await fetchAffirmations(affirmationsURL);
+
+                affirmations.forEach((_, index) => {
+                    const tree = createTree(index);
+                    if (tree) {
+                        tree.addEventListener('click', () => showAffirmation(tree, affirmations, index));
+                        container.appendChild(tree);
+                    }
+                });
+            } catch (error) {
+                console.error('Error rendering trees:', error);
+            }
+        });
+
+        function showAffirmation(tree, affirmations, index) {
+            const affirmation = affirmations[index];
+
+            const bubble = document.createElement('div');
+            bubble.className = 'memory-text';
+            bubble.style.padding = `5px`;
+            bubble.style.display = `flex`;
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '×';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '-4px';
+            closeButton.style.right = '-2px';
+            closeButton.style.border = 'none';
+            closeButton.style.background = 'transparent';
+            closeButton.style.fontSize = '1.5rem';
+            closeButton.style.cursor = 'pointer';
+            closeButton.style.color = '#333';
+
+            closeButton.addEventListener('click', () => bubble.remove());
+
+            bubble.appendChild(closeButton);
+            const textContent = document.createElement('div');
+            textContent.textContent = affirmation;
+            textContent.style.marginTop = '2px';
+            textContent.style.padding = '10px';
+            textContent.style.wordBreak = 'break-word';
+            bubble.appendChild(textContent);
 
             const rect = tree.getBoundingClientRect();
-            bubble.style.top = `${rect.top - 10}px`;
-            bubble.style.left = `${rect.left + rect.width / 2}px`;
+
+            let bubbleLeft = rect.left + rect.width / 2;
+            if (bubbleLeft + bubble.offsetWidth > window.innerWidth) {
+                bubbleLeft = window.innerWidth - bubble.offsetWidth - 10;
+            } else if (bubbleLeft < 0) {
+                bubbleLeft = 10;
+            }
+
+            let bubbleTop = rect.top - 10;
+            if (bubbleTop + bubble.offsetHeight < 0) {
+                bubbleTop = rect.bottom + 10;
+            } else if (bubbleTop + bubble.offsetHeight > window.innerHeight) {
+                bubbleTop = window.innerHeight - bubble.offsetHeight - 10;
+            }
+
+            bubble.style.top = `${bubbleTop}px`;
+            bubble.style.left = `${bubbleLeft}px`;
 
             document.body.appendChild(bubble);
-
-            setTimeout(() => bubble.remove(), 3000);
-        }
-
-        function isOverlapping(newTop, newLeft, existingElements) {
-            const newTreeSize = 70;
-            for (const element of existingElements) {
-                const rect = element.getBoundingClientRect();
-                const existingTop = rect.top;
-                const existingLeft = rect.left;
-                const existingBottom = existingTop + rect.height;
-                const existingRight = existingLeft + rect.width;
-
-                if (
-                    newTop < existingBottom &&
-                    newTop + newTreeSize > existingTop &&
-                    newLeft < existingRight &&
-                    newLeft + newTreeSize > existingLeft
-                ) {
-                    return true;
-                }
-            }
-            return false;
         }
     </script>
+
 </body>
 
 </html>
