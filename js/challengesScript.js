@@ -67,8 +67,8 @@ doneButton.addEventListener("click", () => {
   setTimeout(() => {
     character.style.opacity = "1";
     currentStep++;
-    // if (currentStep < woodenBlocks.length) {
-    if (currentStep < 1) {
+    if (currentStep < woodenBlocks.length) {
+    // if (currentStep < 1) {
       const nextBlock = woodenBlocks[currentStep];
       const rect = nextBlock.getBoundingClientRect();
       const parentRect = character.offsetParent.getBoundingClientRect();
