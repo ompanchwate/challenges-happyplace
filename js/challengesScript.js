@@ -7,8 +7,8 @@ const closeButton = document.getElementById("closeButton");  // Close button ref
 let currentStep = 0;
 
 // Fetch tasks from the JSON file
-// Fetch tasks from the JSON file
-fetch('tasks.json')
+const url = "../data/tasks.json";
+fetch(url)
   .then(response => response.json())
   .then(tasks => {
     const taskKeys = Object.keys(tasks);
@@ -91,7 +91,6 @@ closeButton.addEventListener("click", () => {
 
 // Move character to final step and play animation
 function moveToFinalStep() {
-  console.log("Finalll")
   const rect = finalStep.getBoundingClientRect();
   const parentRect = character.offsetParent.getBoundingClientRect();
   const offsetX = rect.left - parentRect.left - 33;
@@ -136,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const taskDescription = document.getElementById("taskDescription");
   const taskTitle = document.querySelector(".task-title");
 
-  fetch("tasks.json")
+  fetch(url)
     .then(response => response.json())
     .then(tasks => {
       const taskKeys = Object.keys(tasks);
